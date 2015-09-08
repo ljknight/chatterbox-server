@@ -20,14 +20,14 @@ var display = function(user, message) { // creates template for user + message
 var fetch = function() {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'http://127.0.0.1:3000/classes/messages',
+    url: './classes/messages',
     type: 'GET',
     // data: JSON.stringify(message),
     dataType: 'JSON',
     contentType: 'application/json',
     success: function (data) {
       $('#chats').empty();
-      for (var i = 0; i < 20; i++) {
+      for (var i = 0; i < data.results.length; i++) {
         var room = escapeHTML(data.results[i].roomname); 
         if (rooms.indexOf(room) === -1) { // check if room exists on room list
           $('#room').append('<option value=' + room + '>' + room + '</option>'); // populate room dropdown with room names of all loaded messages
@@ -53,17 +53,18 @@ var fetch = function() {
 var send = function(message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'http://127.0.0.1:3000/classes/messages',
+    url: './classes/messages',
     type: 'POST',
     data: JSON.stringify({
       username: username,
       text: message,
       roomname: ourRoom
     }),
-    dataType: 'JSON',
+    dataType: 'text',
     contentType: 'application/json',
     success: function (data) {
-      // console.log('message sent');
+      console.log('chat sent')
+      fetch();
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error

@@ -30,23 +30,33 @@ var requestHandler = function(request, response) {
   //API requests
   if ((/^\/classes\//).test(request.url)) {
     console.log("Navigating API")
+    console.log("Serving request type " + request.method + " for url " + request.url);
+    
+    //GET
     if (request.method === 'GET') {
-      console.log("Serving request type " + request.method + " for url " + request.url);
+      console.log("ATTEMPTING GET");
       responseMessage = JSON.stringify(messages.get());
       statusCode = 200;
+      headers['Content-Type'] = "application/json";
       response.writeHead(statusCode, headers);
       response.end(responseMessage);
+    
+    //POST
     } else if (request.method === 'POST') {
-      console.log("Serving request type " + request.method + " for url " + request.url);    
+      console.log("ATTEMPTING POST");    
       var body = '';
       request.on('data', function(chunk) {
         body += chunk.toString();
       });
       request.on('end', function() {messages.set(body);});
       statusCode = 201;
+      // headers['Content-Type'] = "text/plain";
       response.writeHead(statusCode, headers);
-      response.end("Posted");
+      response.end();
+    
+    //OTHERs
     } else {
+      console.log("INVALID COMMAND");
       statusCode = 404;
       response.writeHead(statusCode, headers);
       response.end("INVALID COMMAND");
