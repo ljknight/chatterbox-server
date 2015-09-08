@@ -13,7 +13,8 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 var messages = require("./messages/messages.js");
-var bodyParser = require("../node_modules/body-parser");
+// var bodyParser = require("../node_modules/body-parser");
+var fs = require('fs');
 
 var requestHandler = function(request, response) {
 
@@ -22,15 +23,19 @@ var requestHandler = function(request, response) {
 
   //POST
     //add the data to messages (using messages methods)
-  var statusCode;
-  var responseMessage = "Responded"
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = "application/json";
 
   console.log("URL:", request.url);
-  if ((/classes\//).test(request.url)) {
+  //API requests
+  if ((/^\/classes\//).test(request.url)) {
+    console.log("Navigating API")
     if (request.method === 'GET') {
+      console.log("Serving request type " + request.method + " for url " + request.url);
       responseMessage = JSON.stringify(messages.get());
       statusCode = 200;
-      // console.log(JSON.stringify(messages.get()))
+      response.writeHead(statusCode, headers);
+      response.end(responseMessage);
     } else if (request.method === 'POST') {
       console.log("Serving request type " + request.method + " for url " + request.url);    
       var body = '';
@@ -39,24 +44,75 @@ var requestHandler = function(request, response) {
       });
       request.on('end', function() {messages.set(body);});
       statusCode = 201;
-      // console.log(body);
+      response.writeHead(statusCode, headers);
+      response.end("Posted");
     } else {
       statusCode = 404;
+      response.writeHead(statusCode, headers);
+      response.end("INVALID COMMAND");
     }
+  //Initial index request
+  } else if (request.url === '/'){
+    fs.readFile('./index.html', "utf8",function(err, html) {
+      console.log("INITIAL REQUEST FOR:", html);
+      headers['Content-Type'] = 'text/html';
+      statusCode = 200;
+      response.writeHead(statusCode, headers);
+      response.end(html);
+    });
+  //Client requests
+  } else if ((/^\/client\//).test(request.url)) {
+    //html
+    if (request.url.indexOf(".html") !== -1) {
+      console.log("THE REQEST URL", request.url);
+      fs.readFile("."+request.url, "utf8", function(err, html) {
+        console.log("CLIENT HTML REQUEST FOR:", html);
+        headers['Content-Type'] = 'text/html';
+        statusCode = 200;
+        response.writeHead(statusCode, headers);
+        response.end(html);
+      });
+
+    //css
+    } else if (request.url.indexOf(".css") !== -1) {
+      console.log("THE REQEST URL", request.url);
+      fs.readFile("."+request.url, "utf8", function(err, css) {
+        console.log("CLIENT CSS REQUEST FOR:", css);
+        headers['Content-Type'] = 'text/css';
+        statusCode = 200;
+        response.writeHead(statusCode, headers);
+        response.end(css);
+      });
+    
+    //JS
+    } else if (request.url.indexOf(".js") !== -1) {
+      console.log("THE REQEST URL", request.url);
+      fs.readFile("."+request.url, "utf8", function(err, js) {
+        console.log("CLIENT JS REQUEST FOR:", js);
+        headers['Content-Type'] = 'text/javascript';
+        statusCode = 200;
+        response.writeHead(statusCode, headers);
+        response.end(js);
+      });
+
+    //others
+    } else {
+      console.log(request.url, "NOT FOUND IN CLIENT FOLDER");
+      statusCode = 404;
+    }
+  
+
+    //read the file at url
+    //determine the file type at that url and set the right header
+    //set reponse message the the read file
+
+
+  //anything else
   } else {
     statusCode = 404;
-  }
-    // The outgoing status.
-    
-    // See the note below about CORS headers.
-    var headers = defaultCorsHeaders;
     response.writeHead(statusCode, headers);
-    // Tell the client what type of data we're sending.
-    headers['Content-Type'] = "application/json";
-    // .writeHead() writes to the request line and headers of the response,
-    // which includes the status and all headers.
-
     response.end(responseMessage);
+  }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

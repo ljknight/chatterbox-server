@@ -20,7 +20,7 @@ var display = function(user, message) { // creates template for user + message
 var fetch = function() {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'http://127.0.0.1:3000/messages',
+    url: 'http://127.0.0.1:3000/classes/messages',
     type: 'GET',
     // data: JSON.stringify(message),
     dataType: 'JSON',
@@ -53,7 +53,7 @@ var fetch = function() {
 var send = function(message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'http://127.0.0.1:3000/messages',
+    url: 'http://127.0.0.1:3000/classes/messages',
     type: 'POST',
     data: JSON.stringify({
       username: username,
