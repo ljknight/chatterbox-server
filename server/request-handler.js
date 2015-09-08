@@ -12,7 +12,32 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var messages = require("./messages/messages.js");
+var bodyParser = require("../node_modules/body-parser");
+
 var requestHandler = function(request, response) {
+
+  //GET
+    //return the entirety of messages
+
+  //POSt
+    //add the data to messages (using messages methods)
+
+  if (request.method === 'GET') {
+    console.dir(messages.get())
+    response.write(JSON.stringify(messages.get()));
+    console.log(response)
+  } else if (request.method === 'POST') {
+    // console.log(request.body);
+    // var buffer = '';
+    // request.on('data', function(chunk) {
+    //   buffer += chunk.toString();
+    // });
+    // console.log("This is the buffer:", buffer);
+    // // console.log(JSON.parse(buffer));
+    // messages.set();
+  }
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -45,6 +70,9 @@ var requestHandler = function(request, response) {
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
 
+  //testingresponse.write
+  // response.write(JSON.stringify([1,2,3,4]));
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -52,7 +80,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end("Hello, World!");
+  response.end('success!');
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -71,3 +99,4 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
+exports.requestHandler = requestHandler;
