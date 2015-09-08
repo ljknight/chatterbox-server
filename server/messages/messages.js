@@ -11,7 +11,8 @@ var getLastID = function() {
 
 //messages.set > takes in object adds date, object id and pushes to collection
 
-var set = function(chatMessage) {
+var set = function(chatMessageJSON) {
+  var chatMessage = JSON.parse(chatMessageJSON);
   chatMessage.createdAt = new Date();
   chatMessage.objectID = getLastID();
   collection.push(chatMessage);
