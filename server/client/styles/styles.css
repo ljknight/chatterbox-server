@@ -19,6 +19,7 @@ body {
     float: left;
     margin-left: 5%;
     margin-right: 5%;
+    min-width: 300px;
     padding: 50px 60px;
     text-align: left;
     width: 40%;
@@ -36,6 +37,7 @@ body {
 }
 
 input {
+    margin-bottom: 10px;
     padding: 5px;
 }
 
@@ -59,7 +61,8 @@ h3 {
 }
 
 select {
-    max-width: 200px
+    margin-bottom: 10px;
+    max-width: 200px;
 }
 /* makes sure chats background doesn't disappear on 'load chat' empty */
 #chats {
