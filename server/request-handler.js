@@ -20,34 +20,43 @@ var requestHandler = function(request, response) {
   //GET
     //return the entirety of messages
 
-  //POSt
+  //POST
     //add the data to messages (using messages methods)
+  var statusCode;
+  var responseMessage = "Responded"
 
-
-
-  if (request.method === 'GET') {
-    response.write(JSON.stringify(messages.get()))
-    console.log(JSON.stringify(messages.get()))
-  } else if (request.method === 'POST') {
-    console.log("Serving request type " + request.method + " for url " + request.url);    
-    var body = '';
-    request.on('data', function(chunk) {
-      body += chunk.toString();
-    });
-    request.on('end', function() {messages.set(body);});
-    console.log(body);
+  console.log("URL:", request.url);
+  if ((/classes\//).test(request.url)) {
+    if (request.method === 'GET') {
+      responseMessage = JSON.stringify(messages.get());
+      statusCode = 200;
+      // console.log(JSON.stringify(messages.get()))
+    } else if (request.method === 'POST') {
+      console.log("Serving request type " + request.method + " for url " + request.url);    
+      var body = '';
+      request.on('data', function(chunk) {
+        body += chunk.toString();
+      });
+      request.on('end', function() {messages.set(body);});
+      statusCode = 201;
+      // console.log(body);
+    } else {
+      statusCode = 404;
+    }
+  } else {
+    statusCode = 404;
   }
-  // The outgoing status.
-  var statusCode = 200;
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
-  response.writeHead(statusCode, headers);
-  // Tell the client what type of data we're sending.
-  headers['Content-Type'] = "application/json";
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
+    // The outgoing status.
+    
+    // See the note below about CORS headers.
+    var headers = defaultCorsHeaders;
+    response.writeHead(statusCode, headers);
+    // Tell the client what type of data we're sending.
+    headers['Content-Type'] = "application/json";
+    // .writeHead() writes to the request line and headers of the response,
+    // which includes the status and all headers.
 
-  response.end();
+    response.end(responseMessage);
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

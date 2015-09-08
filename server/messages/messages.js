@@ -2,7 +2,10 @@
 
 //messages .collection = actual array
 // var messages = {};
-var collection = [{message: 'hello'}];
+var collection = {
+  results: []
+};
+
 var lastID = 0;
 
 var getLastID = function() {
@@ -15,7 +18,7 @@ var set = function(chatMessageJSON) {
   var chatMessage = JSON.parse(chatMessageJSON);
   chatMessage.createdAt = new Date();
   chatMessage.objectID = getLastID();
-  collection.push(chatMessage);
+  collection.results.push(chatMessage);
 };
 
 //messages.get > returns entire array
